@@ -81,7 +81,7 @@
     const email = document.createElement('span');
     email.textContent = session.email;
     items.append(email);
-    for (const [label, href] of [['Baixar Vault', api + 'exports'], ...(!session.local ? [['Sair', '/cdn-cgi/access/logout']] : [])]) {
+    for (const [label, href] of [['Baixar Vault', api + 'exports'], ...(!session.local && session.provider !== 'team' ? [['Sair', '/cdn-cgi/access/logout']] : [])]) {
       const link = document.createElement('a');
       link.textContent = label;
       link.href = href;
@@ -93,6 +93,16 @@
       backups.textContent = 'Restaurar backup';
       backups.onclick = openBackups;
       items.append(backups);
+    }
+    if (session.provider === 'team') {
+      const signout = document.createElement('form');
+      signout.method = 'post';
+      signout.action = '/auth/logout';
+      const submit = document.createElement('button');
+      submit.type = 'submit';
+      submit.textContent = 'Sair';
+      signout.append(submit);
+      items.append(signout);
     }
     account.append(button, items);
     header.after(account);

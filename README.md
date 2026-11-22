@@ -25,9 +25,9 @@ Execute a importação em outro terminal. A pasta de origem deve conter o par `v
 
 ## Publicar no Cloudflare
 
-O projeto usa **Cloudflare Workers com Static Assets e Durable Objects SQLite**. O endereço `.workers.dev` dispensa a compra de domínio. Workers, SQLite e Access podem operar no plano Free dentro dos limites de uso. [Workers](https://developers.cloudflare.com/workers/platform/limits/) · [Durable Objects](https://developers.cloudflare.com/durable-objects/platform/pricing/) · [Cloudflare Access](https://www.cloudflare.com/sase/products/access/)
+O projeto usa **Cloudflare Workers com Static Assets e Durable Objects SQLite**. O endereço `.workers.dev` dispensa a compra de domínio. Workers e SQLite podem operar no plano Free dentro dos limites de uso. O login por chave é gerenciado pelo próprio site. [Workers](https://developers.cloudflare.com/workers/platform/limits/) · [Durable Objects](https://developers.cloudflare.com/durable-objects/platform/pricing/)
 
-Em **Workers Builds**, conecte o repositório privado `Runic-Wolf/loknite-class-system-website` ao Worker `loknite-class-system-website`. Configure a branch de produção e o build:
+Para publicar direto do checkout, use `npm ci`, `npm run build`, `npx wrangler login` e `npm run deploy:cloudflare`. Se usar **Workers Builds** depois, conecte o Worker `loknite-class-system-website` a um repositório privado e use estes campos:
 
 | Campo | Valor |
 | --- | --- |
@@ -35,37 +35,32 @@ Em **Workers Builds**, conecte o repositório privado `Runic-Wolf/loknite-class-
 | Build command | `npm run build` |
 | Deploy command | `npm run deploy:cloudflare` |
 
-O build gera `dist/`. O Wrangler usa `wrangler.jsonc` para publicar os arquivos, o backend e o Durable Object no mesmo Worker. A migração inicial do SQLite roda na primeira utilização. Para um deploy manual a partir de um checkout do repositório privado, use `npm ci`, `npm run build`, `npx wrangler login` e `npm run deploy:cloudflare`. [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)
+O build gera `dist/`. O Wrangler usa `wrangler.jsonc` para publicar os arquivos, o backend e o Durable Object no mesmo Worker. A migração inicial do SQLite roda na primeira utilização. [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)
 
 ### Login da equipe
 
-1. Ative Cloudflare Zero Trust no plano Free. No Worker, abra **Access** e proteja a produção. No Zero Trust, limite a política **Allow** aos e-mails da equipe. É possível usar PIN por e-mail como método de login.
-2. Em **Settings → Variables and Secrets**, preencha os valores abaixo. O gateway valida o token antes de entregar a interface, as imagens e a API.
+Cada pessoa entra com seu e-mail e uma chave individual. No checkout usado para publicar, execute:
 
-| Variável | Valor |
-| --- | --- |
-| `ACCESS_TEAM` | Prefixo do domínio Zero Trust `<equipe>.cloudflareaccess.com` |
-| `ACCESS_AUDIENCE` | Application Audience (AUD) do app Access |
-| `LCS_TEAM_EMAILS` | E-mails com acesso, separados por vírgula |
-| `VAULT_ADMIN_EMAILS` | E-mails administradores, separados por vírgula e presentes na lista da equipe |
+```sh
+npm run team:access -- add administrador@equipe.example --admin
+npm run team:access -- add pessoa@equipe.example
+```
 
-3. Confira no navegador o login de um e-mail autorizado e o bloqueio de um visitante sem sessão. A conta de desenvolvimento é ativada pelo comando local e funciona em loopback. [Configuração de Access para Workers](https://developers.cloudflare.com/workers/configuration/cloudflare-access/)
+O comando envia os hashes das chaves ao Worker como secrets e informa o caminho de um arquivo local com a chave individual. Entregue cada chave em particular à pessoa cadastrada. O registro de administração fica em `%LOCALAPPDATA%/Loknite Class System/team-access` no Windows e `~/.config/loknite-team-access` em outros sistemas. O registro é necessário para administrar a lista e deve ficar fora do checkout. A sessão dura até 12 horas.
+
+Use `npm run team:access -- rotate <email>` para trocar uma chave ou `npm run team:access -- revoke <email>` para cancelar o acesso. As duas operações também invalidam as sessões daquela conta.
+
+Cloudflare Access continua disponível como opção. Para usá-lo, configure uma aplicação Access para o Worker e defina `ACCESS_TEAM`, `ACCESS_AUDIENCE`, `LCS_TEAM_EMAILS` e `VAULT_ADMIN_EMAILS` nas variáveis do Worker. [Configuração do Cloudflare Access](https://developers.cloudflare.com/workers/configuration/cloudflare-access/)
 
 ### Importação inicial em produção
 
-A importação requer uma sessão do Access com e-mail administrador. No PowerShell, obtenha o token pelo `cloudflared` e passe-o ao processo por variável de ambiente:
+Use uma chave administrativa no último argumento:
 
 ```powershell
-$lokniteUrl = 'https://loknite-class-system-website.SEUSUBDOMINIO.workers.dev'
-$env:LCS_ACCESS_TOKEN = cloudflared access token -app=$lokniteUrl
-try {
-  node scripts/import-vault.mjs C:/caminho/LCS_VAULT $lokniteUrl
-} finally {
-  Remove-Item Env:LCS_ACCESS_TOKEN -ErrorAction SilentlyContinue
-}
+node scripts/import-vault.mjs C:/caminho/LCS_VAULT https://loknite-class-system-website.SEUSUBDOMINIO.workers.dev C:/caminho/chave-admin.json
 ```
 
-A importação inicial valida o par, as referências e os arquivos antes de aceitar o workspace. Para migrar a equipe, compare as contagens de classes e cartas, faça uma edição de teste e reabra o site. [Autenticação CLI do Access](https://developers.cloudflare.com/cloudflare-one/tutorials/cli/)
+A importação valida o par, as referências e os arquivos antes de aceitar o workspace. Para migrar a equipe, compare as contagens de classes e cartas, faça uma edição de teste e reabra o site.
 
 ## Arquitetura
 

@@ -9,7 +9,8 @@
     "build": "node scripts/build.mjs",
     "dev": "wrangler dev --local --var LCS_LOCAL_DEV:true",
     "import-vault": "node scripts/import-vault.mjs",
-    "deploy:cloudflare": "wrangler deploy"
+    "deploy:cloudflare": "wrangler deploy",
+    "team:access": "node scripts/team-access.mjs"
   },
   "dependencies": {
     "jose": "^6.1.0"
