@@ -1,0 +1,139 @@
+{
+  "format": "lcs-official-tier-role-icons",
+  "schemaVersion": 1,
+  "assetCount": 12,
+  "assets": [
+    {
+      "order": 1,
+      "group": "tier",
+      "tag": "C1",
+      "id": "tag.tier.c1",
+      "source": "C1_Bronze.png",
+      "path": "media_vault/official/tag-icons/tier/c1.png",
+      "mime": "image/png",
+      "sha256": "7a2e0ad686280034233b1dfce8bce62ab08e8c032cfed5c8f8263c9d0737dd83",
+      "size": 8133
+    },
+    {
+      "order": 2,
+      "group": "tier",
+      "tag": "C2",
+      "id": "tag.tier.c2",
+      "source": "C2_Prata.png",
+      "path": "media_vault/official/tag-icons/tier/c2.png",
+      "mime": "image/png",
+      "sha256": "704bcdb7826d03abff3c8e653f1375c443df09e8ace17e5876219b146f41cf52",
+      "size": 9195
+    },
+    {
+      "order": 3,
+      "group": "tier",
+      "tag": "C3",
+      "id": "tag.tier.c3",
+      "source": "C3_Ouro.png",
+      "path": "media_vault/official/tag-icons/tier/c3.png",
+      "mime": "image/png",
+      "sha256": "93edd655519af84943922852ef9251f146927f7b127d17bbe808e4886e6d9838",
+      "size": 8824
+    },
+    {
+      "order": 4,
+      "group": "tier",
+      "tag": "SPEC",
+      "id": "tag.tier.spec",
+      "source": "SPEC_Especializacao.png",
+      "path": "media_vault/official/tag-icons/tier/spec.png",
+      "mime": "image/png",
+      "sha256": "764228162b5614f86612f0ead5540ffda8fc4a70863195157bce915949d90d0e",
+      "size": 9018
+    },
+    {
+      "order": 5,
+      "group": "role",
+      "tag": "DPS",
+      "id": "tag.role.dps",
+      "source": "DPS.png",
+      "path": "media_vault/official/tag-icons/role/dps.png",
+      "mime": "image/png",
+      "sha256": "2ac4d7c04f51eeb74ecdc5add8b17bf34938e615dd846ffeb299dcac5704e91d",
+      "size": 8551
+    },
+    {
+      "order": 6,
+      "group": "role",
+      "tag": "TANK",
+      "id": "tag.role.tank",
+      "source": "TANK.png",
+      "path": "media_vault/official/tag-icons/role/tank.png",
+      "mime": "image/png",
+      "sha256": "35d6ca91c3ddd8e5cdae6d730fbc4d00e3ff44d3d845b812a19542f087ead86f",
+      "size": 8550
+    },
+    {
+      "order": 7,
+      "group": "role",
+      "tag": "HEAL",
+      "id": "tag.role.heal",
+      "source": "HEAL.png",
+      "path": "media_vault/official/tag-icons/role/heal.png",
+      "mime": "image/png",
+      "sha256": "eac9b564aeed13d96b84cdb8914636e8f198b4477e3f6e237cd88aa019e2aef1",
+      "size": 7710
+    },
+    {
+      "order": 8,
+      "group": "role",
+      "tag": "CTRL",
+      "id": "tag.role.ctrl",
+      "source": "CONTROL.png",
+      "path": "media_vault/official/tag-icons/role/ctrl.png",
+      "mime": "image/png",
+      "sha256": "c9aeadf5a04b07cb29d576723f3644a6bbf2878c25f7a1a70474d71b82c9067b",
+      "size": 8300
+    },
+    {
+      "order": 9,
+      "group": "role",
+      "tag": "BUFF",
+      "id": "tag.role.buff",
+      "source": "BUFF.png",
+      "path": "media_vault/official/tag-icons/role/buff.png",
+      "mime": "image/png",
+      "sha256": "377820cc181c6e2342b85c9573f455162f36abb45c041eb1eb524236d5eb0f84",
+      "size": 7863
+    },
+    {
+      "order": 10,
+      "group": "role",
+      "tag": "DEBUFF",
+      "id": "tag.role.debuff",
+      "source": "DEBUFF.png",
+      "path": "media_vault/official/tag-icons/role/debuff.png",
+      "mime": "image/png",
+      "sha256": "c69a7c06f8b200479dc21f5a0be1490e25b70defff1bd24f3ce0e7f90bc0782d",
+      "size": 8255
+    },
+    {
+      "order": 11,
+      "group": "role",
+      "tag": "BURST",
+      "id": "tag.role.burst",
+      "source": "BURST.png",
+      "path": "media_vault/official/tag-icons/role/burst.png",
+      "mime": "image/png",
+      "sha256": "36d166e43a0a41fbf02f57bfd2ea5f3bd080567196f9da55276b3390b33d91b7",
+      "size": 8543
+    },
+    {
+      "order": 12,
+      "group": "role",
+      "tag": "DOT",
+      "id": "tag.role.dot",
+      "source": "DOT.png",
+      "path": "media_vault/official/tag-icons/role/dot.png",
+      "mime": "image/png",
+      "sha256": "19981191a356e948f7734bbf270deb7cd70131db0f6501406b249edd9d9d1664",
+      "size": 8307
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+services:
+  loknite:
+    build: .
+    ports:
+      - "127.0.0.1:8788:8788"
+    volumes:
+      - loknite-data:/app/.wrangler
+    environment:
+      WRANGLER_SEND_METRICS: "false"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8788/api/v1/session').then(r=>{process.exit(r.ok?0:1)},()=>process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  loknite-data:

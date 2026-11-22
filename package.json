@@ -1,0 +1,20 @@
+{
+  "name": "loknite-class-system-website",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "wrangler dev --local --var LCS_LOCAL_DEV:true",
+    "import-vault": "node scripts/import-vault.mjs",
+    "deploy:cloudflare": "wrangler deploy"
+  },
+  "dependencies": {
+    "jose": "^6.1.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.166.0"
+  }
+}

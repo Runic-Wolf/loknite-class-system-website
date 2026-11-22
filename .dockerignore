@@ -1,0 +1,10 @@
+.git
+node_modules
+dist
+seed
+.wrangler
+.dev.vars*
+.env*
+.taste-skill
+AGENTS.md
+server/catalog.generated.json
