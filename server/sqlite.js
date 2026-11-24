@@ -34,10 +34,13 @@ export function migrate(storage) {
 }
 
 function backfillMentionKeys(sql) {
+  // Durable Objects SQLite has a 100-variable limit. Each row binds two CASE
+  // values plus its id in the IN clause, so keep batches well below 33 rows.
+  const batchSize = 30;
   for (const table of ['classes', 'skills', 'cards']) {
     const records = sql.exec(`SELECT id, name FROM ${table} ORDER BY id`).toArray();
-    for (let offset = 0; offset < records.length; offset += 100) {
-      const batch = records.slice(offset, offset + 100);
+    for (let offset = 0; offset < records.length; offset += batchSize) {
+      const batch = records.slice(offset, offset + batchSize);
       if (!batch.length) continue;
       const cases = batch.map(() => 'WHEN ? THEN ?').join(' ');
       const placeholders = batch.map(() => '?').join(', ');
