@@ -1,4 +1,4 @@
-import { createHash, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
 import { HttpError, readBytes } from './http.js';
 
@@ -123,6 +123,21 @@ export async function teamAuthRoute(request, env, identity) {
   }
   const email = form.get('email')?.trim().toLowerCase() ?? '';
   const accessKey = form.get('key')?.trim() ?? '';
+  if (!env.LCS_LOGIN_LIMITER) return new Response('Login temporariamente indisponível.', { status: 503 });
+  const remoteAddress = request.headers.get('CF-Connecting-IP')?.trim() || '<unknown-ip>';
+  const attemptBucket = createHmac('sha256', settings.secret)
+    .update(`${email || '<empty>'}\0${remoteAddress}`).digest('hex');
+  let allowed = false;
+  try {
+    ({ success: allowed } = await env.LCS_LOGIN_LIMITER.limit({ key: attemptBucket }));
+  } catch {
+    return new Response('Login temporariamente indisponível.', { status: 503 });
+  }
+  if (!allowed) {
+    const response = page({ error: 'Muitas tentativas. Aguarde um minuto antes de tentar de novo.', status: 429 });
+    response.headers.set('Retry-After', '60');
+    return response;
+  }
   const account = accountFor(settings.accounts, email);
   const expected = Buffer.from(account?.digest ?? '0'.repeat(64), 'hex');
   if (!timingSafeEqual(hashKey(accessKey), expected) || !keyPattern.test(accessKey) || !account) {

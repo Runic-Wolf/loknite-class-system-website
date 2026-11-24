@@ -1,0 +1,51 @@
+.page { min-width: 0; display: grid; gap: 14px; }
+.pageHeading h1 { margin: 7px 0 5px; font-size: clamp(27px, 2.4vw, 36px); font-weight: 720; letter-spacing: -.045em; line-height: 1.1; }
+.pageHeading p { max-width: 56ch; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.panel { min-width: 0; overflow: clip; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+.panel > header { min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line-soft); }
+.panel h2 { margin: 4px 0 0; font-size: 15px; letter-spacing: -.02em; }
+.panelDescription { max-width: 74ch; margin: 0; padding: 12px 14px; color: var(--muted); font-size: 10px; line-height: 1.65; }
+.roleBadge { padding: 6px 9px; border: 1px solid var(--line-accent); border-radius: 99px; background: var(--accent-wash); color: var(--accent-bright); font: 9px var(--mono); }
+.sessionInfo { min-width: 0; display: flex; align-items: center; gap: 11px; padding: 13px 14px; }
+.sessionInfo > div { min-width: 0; flex: 1; display: grid; gap: 4px; }
+.sessionInfo strong, .sessionInfo small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sessionInfo strong { color: var(--ink); font-size: 11px; }
+.sessionInfo small { color: var(--muted); font-size: 9px; }
+.avatar { width: 37px; height: 37px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; background: var(--gold); color: var(--on-accent); font-size: 13px; font-weight: 800; }
+.exportLinks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px; }
+.exportCard { min-width: 0; min-height: 67px; display: flex; align-items: center; justify-content: space-between; gap: 9px; padding: 10px; border: 1px solid var(--line-soft); border-radius: 8px; background: var(--panel-raised); color: var(--ink); }
+.exportCard:hover { border-color: var(--line-accent); background: var(--surface-hover); }
+.exportCard > span { min-width: 0; display: grid; gap: 4px; }
+.exportCard strong, .exportCard small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exportCard strong { font-size: 10px; }
+.exportCard small { color: var(--muted); font-size: 8px; }
+.exportCard > b { flex: 0 0 auto; color: var(--gold-bright); font-size: 16px; font-weight: 500; }
+.backupList { display: grid; margin: 0; padding: 0; list-style: none; }
+.backupList li { min-width: 0; min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--line-soft); }
+.backupList li:last-child { border-bottom: 0; }
+.backupList li > div { min-width: 0; display: grid; gap: 5px; }
+.backupList li strong { font-size: 10px; }
+.backupList li small { color: var(--muted); font-size: 9px; }
+.backupList li small i { color: var(--gold); font-style: normal; }
+.emptyState, .backupError { min-height: 120px; display: grid; align-content: center; justify-items: start; gap: 7px; padding: 14px; }
+.emptyState strong { font-size: 11px; }
+.emptyState p, .backupError p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+.backupError p { color: var(--red); }
+.successNotice, .errorNotice { margin: 0; padding: 10px 12px; border: 1px solid var(--line-accent); border-radius: 8px; background: var(--accent-wash); color: var(--accent-bright); font-size: 10px; line-height: 1.55; }
+.errorNotice { border-color: color-mix(in srgb, var(--red) 42%, transparent); background: color-mix(in srgb, var(--red) 8%, var(--panel)); color: var(--red); }
+.backupSkeleton { display: grid; }
+.backupSkeleton > span { min-height: 62px; display: flex; align-items: center; gap: 11px; padding: 9px 14px; border-bottom: 1px solid var(--line-soft); }
+.backupSkeleton > span:last-child { border-bottom: 0; }
+.backupSkeleton i { width: 34px; height: 34px; border-radius: 9px; background: var(--surface-hover); }
+.backupSkeleton b, .backupSkeleton small { display: block; height: 9px; border-radius: 99px; background: linear-gradient(90deg, var(--panel-raised), var(--surface-hover), var(--panel-raised)); background-size: 220% 100%; animation: skeleton-shimmer 1.6s ease-in-out infinite; }
+.backupSkeleton b { width: 130px; }
+.backupSkeleton small { width: 190px; height: 7px; }
+.revisionNote { margin: 0; color: var(--subtle); font: 9px var(--mono); }
+.confirmDialog { position: fixed; inset: 0; width: min(480px, calc(100vw - 24px)); max-width: none; max-height: min(90dvh, 460px); margin: auto; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--panel); color: var(--ink); box-shadow: 0 24px 90px #000a; }
+.confirmDialog::backdrop { background: rgb(2 8 12 / 76%); backdrop-filter: blur(3px); }
+.confirmDialog h2 { margin: 7px 0 9px; font-size: 21px; letter-spacing: -.035em; }
+.confirmDialog p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.confirmDialog > div { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+@media (max-width: 760px) { .exportLinks { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .page { gap: 11px; } .pageHeading h1 { font-size: 27px; } .pageHeading p { font-size: 11px; } .panel > header { padding-inline: 11px; } .sessionInfo { padding: 11px; } .backupList li { padding-inline: 11px; } .confirmDialog { padding: 18px 15px; } .confirmDialog > div { display: grid; grid-template-columns: 1fr 1fr; } .confirmDialog .button { min-height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .backupSkeleton b, .backupSkeleton small { animation: none; } }

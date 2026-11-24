@@ -1,0 +1,26 @@
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translate3d(var(--art-drag-x, var(--art-offset-x, 0%)), var(--art-drag-y, var(--art-offset-y, 0%)), 0) scale(var(--art-zoom, 1));
+}
+.stage img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  --x: var(--layer-x, 0%);
+  --y: var(--layer-y, 0%);
+  transform: translate3d(calc(var(--x) + var(--scene-x, 0) * var(--travel-x)), calc(var(--y) + var(--scene-y, 0) * var(--travel-y)), 0)
+    scale(var(--layer-scale, 1));
+}
+.stage img[data-selected-layer='true'] {
+  --x: var(--layer-drag-x, var(--layer-x, 0%));
+  --y: var(--layer-drag-y, var(--layer-y, 0%));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stage img { transition: transform 120ms ease-out; }
+  .stage img[data-selected-layer='true'] { transition: none; }
+}

@@ -1,0 +1,66 @@
+:root {
+  color-scheme: dark;
+  --page: #07131d;
+  --panel: #091e2a;
+  --panel-raised: #0a1c2a;
+  --panel-inset: #06131d;
+  --line: #28617a;
+  --line-soft: #173b4d;
+  --line-muted: #1d485d;
+  --line-accent: #147b9b;
+  --ink: #e6f3f7;
+  --ink-soft: #c4d9e1;
+  --muted: #8fabb9;
+  --subtle: #577e94;
+  --gold: #d8b45e;
+  --gold-bright: #f0d187;
+  --accent: #4cd8ed;
+  --accent-bright: #86eafa;
+  --accent-deep: #147b9b;
+  --focus: #4cd8ed;
+  --on-accent: #07131d;
+  --surface-hover: #102c3d;
+  --surface-select: #0d2938;
+  --surface-sidebar: #081a27;
+  --accent-wash: #123746;
+  --green: #83c8a7;
+  --green-soft: #102d2a;
+  --red: #e2988e;
+  --red-soft: #2a1d1b;
+  --tag-surface: #0e2b39;
+  --tag-ink: #c8dfe6;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --mono: 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+  --sans: 'Segoe UI', 'Aptos', Arial, sans-serif;
+  font-family: var(--sans);
+  background: var(--page);
+  color: var(--ink);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme='obsidian'] {
+  --page: #111315; --panel: #191c1e; --panel-raised: #202426; --panel-inset: #141718;
+  --line: #303638; --line-soft: #272c2e; --line-muted: #414744; --line-accent: #786638;
+  --ink: #f2f0e8; --ink-soft: #c9c9c1; --muted: #9b9c94; --subtle: #737770;
+  --gold: #d9b867; --gold-bright: #f0d187; --accent: #d9b867; --accent-bright: #f0d187;
+  --accent-deep: #b69a53; --focus: #f0d187; --on-accent: #171817; --surface-hover: #252625;
+  --surface-select: #26231b; --surface-sidebar: #141617; --accent-wash: #29261e;
+  --green: #94b88e; --green-soft: #1a251d; --red: #ed8d7e; --red-soft: #2a1d1b;
+  --tag-surface: #24231f; --tag-ink: #d9c58c;
+}
+
+:root[data-theme='ember'] {
+  --page: #17120f; --panel: #211a17; --panel-raised: #2a211d; --panel-inset: #15100e;
+  --line: #644435; --line-soft: #463027; --line-muted: #563b30; --line-accent: #a6543b;
+  --ink: #f6eee9; --ink-soft: #e0c9bc; --muted: #b59a8d; --subtle: #8b6c60;
+  --gold: #e8b968; --gold-bright: #f7d493; --accent: #e28b66; --accent-bright: #ffb18b;
+  --accent-deep: #b95b3d; --focus: #ffb18b; --on-accent: #17120f; --surface-hover: #382720;
+  --surface-select: #3b2922; --surface-sidebar: #1d1714; --accent-wash: #432a20;
+  --green: #8ec5a6; --green-soft: #1d2b21; --red: #ed8d7e; --red-soft: #34211d;
+  --tag-surface: #382921; --tag-ink: #f0d0af;
+}

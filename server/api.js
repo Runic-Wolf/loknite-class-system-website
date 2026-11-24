@@ -1,11 +1,12 @@
 import { applyChanges } from '../app/workspace-changes.js';
-import domain from './vault-service.cjs';
+import { createVaultService, VaultError } from './vault-domain.js';
+import { handleCatalog } from './catalog-api.js';
 import { createRepository } from './repository.js';
 import { createMedia } from './media.js';
 import { HttpError, json, readBytes, readJson, revisionFor } from './http.js';
 import catalog from './catalog.generated.json';
+import { writeAudit } from './audit.js';
 
-const { createVaultService, VaultError } = domain;
 const mediaLimit = 12 * 1024 * 1024;
 const mutationRoutes = new Set(['cards/confirm', 'cards/unconfirm', 'cards/delete', 'skills/delete', 'backups/restore', 'import/legacy']);
 
@@ -30,6 +31,9 @@ export async function handleApi({ request, env, data, params }) {
   }
 
   try {
+    if (params.path?.[0] === 'catalog') {
+      return await handleCatalog({ request, storage: env.storage, identity: data.identity, path: params.path.slice(1) });
+    }
     const versioned = (route === 'workspace' && method === 'PATCH') || (method === 'POST' && mutationRoutes.has(route));
     const media = createMedia(env, catalog.metadata);
     const repository = createRepository(env, data.identity.email, method + ' ' + route, versioned ? revisionFor(request) : undefined);
@@ -37,6 +41,11 @@ export async function handleApi({ request, env, data, params }) {
 
     if (method === 'GET') {
       switch (route) {
+        case 'health': {
+          const migration = await env.DB.prepare('SELECT MAX(version) AS version FROM schema_migrations').first();
+          if (!migration?.version) throw new HttpError(503, 'O banco ainda não está pronto.');
+          return json({ status: 'ok', database: 'ready', schemaVersion: migration.version });
+        }
         case 'session':
           return json(data.identity);
         case 'assets':
@@ -56,6 +65,11 @@ export async function handleApi({ request, env, data, params }) {
           if (!pair) throw new HttpError(404, 'Vault indisponível.');
           const type = route.split('/')[1];
           const response = json(type ? pair[type] : pair);
+          env.storage.transactionSync(() => writeAudit(env.storage.sql, {
+            revision: pair.vault.revision, actor: data.identity.email, action: 'export', resource: type ?? 'workspace',
+            resourceName: type ? `Export ${type}` : 'Workspace export',
+            details: { format: type ?? 'pair' }
+          }));
           response.headers.set('Content-Disposition', 'attachment; filename="' + (type ?? 'loknite-export') + '.json"');
           return response;
         }
@@ -125,7 +139,7 @@ export async function handleApi({ request, env, data, params }) {
     }
     return json({ error: 'Rota desconhecida.' }, 404);
   } catch (error) {
-    if (error instanceof HttpError) return json({ error: error.message }, error.status);
+    if (error instanceof HttpError) return json({ error: error.message, ...(error.code ? { code: error.code } : {}) }, error.status);
     if (error instanceof VaultError) {
       const status = ['REVISION_CONFLICT', 'VAULT_EXISTS'].includes(error.code) ? 409 : 422;
       return json({ error: error.message, code: error.code }, status);

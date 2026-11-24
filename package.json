@@ -6,16 +6,50 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "dev": "wrangler dev --local --var LCS_LOCAL_DEV:true",
+    "build:assets": "node scripts/build.mjs",
+    "predev": "node scripts/build.mjs && node scripts/ensure-dev-vars.mjs",
+    "dev": "vite --host 0.0.0.0 --port 8788 --strictPort",
+    "build": "npm run build:assets && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 8789 --strictPort",
+    "typecheck": "tsc --noEmit",
     "import-vault": "node scripts/import-vault.mjs",
     "deploy:cloudflare": "wrangler deploy",
     "team:access": "node scripts/team-access.mjs"
   },
   "dependencies": {
-    "jose": "^6.1.0"
+    "@hono/zod-validator": "^0.9.1",
+    "@hookform/resolvers": "^7.0.8",
+    "@tanstack/react-query": "^5.108.3",
+    "hono": "^4.13.20",
+    "jose": "^6.1.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-hook-form": "^7.92.0",
+    "react-router": "^8.5.2",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.70.1",
+    "@cloudflare/vitest-plugin": "^1.9.0",
+    "@cloudflare/workers-types": "^5.20261122.2",
+    "@playwright/test": "^1.65.1",
+    "@testing-library/jest-dom": "^8.0.0",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "jsdom": "^31.0.1",
+    "sharp": "0.35.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1",
     "wrangler": "4.166.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "workerd@1.20261117.1": true,
+    "workerd@1.20261119.1": true
   }
 }

@@ -7,7 +7,7 @@ const { loadCardLayoutCatalog, loadClassMechanicLayoutCatalog } = require('./car
 const codeRoot = __dirname;
 const baselinePath = path.join(codeRoot, 'baseline', 'Loknite_Class_System_Prototype_v04.html');
 const adapterPath = path.join(__dirname, 'renderer-adapter.js');
-const outputPath = path.join(codeRoot, '..', 'dist', 'index.html');
+const outputPath = path.resolve(process.argv[2] || path.join(codeRoot, '..', 'dist', 'classic', 'index.html'));
 const expectedBaselineSha256 = 'ea57d13766801e6f6faaeead2b2ff7de7c8598d9d21bd53b0bc71d5e466f5cad';
 const marker = 'wire();setScale();boot();';
 
@@ -157,7 +157,7 @@ async function buildRenderer() {
   if (!/^<!doctype html><html/i.test(html)) throw new Error('Unexpected baseline document prefix.');
   html = html.replace('<head>', '<head><meta http-equiv="Content-Security-Policy" content="' + csp + '">');
 
-  html = html.replace('<title>', '<link rel="stylesheet" href="/web.css"><link rel="icon" href="/branding/LCS.png"><title>').replace('<script>', '<script src="/bridge.js"></script><script>').replace('Lok\'nite Class System — Prototype V0.4', 'Lok\'nite Class System');
+  html = html.replace('<title>', '<link rel="stylesheet" href="/web.css"><link rel="icon" type="image/png" sizes="128x128" href="/branding/favicon.png"><title>').replace('<script>', '<script src="/bridge.js"></script><script>').replace('Lok\'nite Class System — Prototype V0.4', 'Lok\'nite Class System');
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, html, 'utf8');
   process.stdout.write(JSON.stringify({ baselineSha256: baselineHash, rendererSha256: crypto.createHash('sha256').update(html).digest('hex'), scriptCspSha256: scriptHash, outputPath }) + '\n');

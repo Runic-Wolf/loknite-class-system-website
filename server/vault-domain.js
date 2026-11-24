@@ -1,6 +1,6 @@
-'use strict';
-
-const crypto = require('node:crypto');
+import { createHash } from 'node:crypto';
+import { validSceneSettings } from '../shared/card-scene.js';
+import { tagCatalog as TAG_CATALOG } from '../shared/tag-catalog.js';
 
 const VAULT_FORMAT = 'loknite-vault';
 const CARDVAULT_FORMAT = 'loknite-cardvault';
@@ -9,14 +9,7 @@ const CATEGORIES = new Set(['class', 'enemy', 'neutral', 'equipment', 'species',
 const TYPES = new Set(['Attack', 'Skill', 'Power', 'Other', 'Class Mechanic']);
 const ELEMENTS = new Set(['Neutral', 'Fire', 'Earth', 'Water', 'Wind', 'Nature', 'Spiritual', 'Arcane', 'Profane', 'Holy']);
 const WORKFLOW_STATUSES = new Set(['draft', 'review', 'completed', 'audited']);
-const TAG_CATALOG = new Set([
-  'C1', 'C2', 'C3', 'SPEC', 'DPS', 'TANK', 'HEAL', 'CTRL', 'BUFF', 'DEBUFF', 'BURST', 'DOT',
-  'STR', 'DEX', 'AGI', 'VIT', 'INT', 'WIL', 'AUS', 'WIT', 'CHA', 'LIGHT', 'MEDIUM', 'HEAVY', 'SHIELD',
-  '1H Sword', '2H Sword', '1H Axe', '2H Axe', '1H Mace', '2H Mace', '1H Spear', '2H Spear', '1H Katana', '2H Katana',
-  'Shortbow', 'Longbow', 'Handgun', 'Crossbow', 'Pistol', 'Blunderbuss', 'Cannon', 'Musket',
-  '1H Wand', '2H Rod', '2H Staff', 'Knuckles', 'Claws', 'Dagger', 'Katar',
-  'Neutral', 'Fire', 'Earth', 'Water', 'Wind', 'Nature', 'Spiritual', 'Arcane', 'Profane', 'Holy'
-]);
+
 const GAMEPLAY_FIELDS = Object.freeze([
   'id', 'category', 'slot', 'name', 'type', 'element',
   'cost', 'ruleText', 'flavourText', 'artPath', 'tags'
@@ -50,7 +43,7 @@ function clone(value) {
   try { return JSON.parse(JSON.stringify(value)); }
   catch (error) { fail('INVALID_INPUT', `Input precisa ser JSON simples: ${error.message}`); }
 }
-function sha256(bytes) { return crypto.createHash('sha256').update(bytes).digest('hex'); }
+function sha256(bytes) { return createHash('sha256').update(bytes).digest('hex'); }
 function canonical(value) {
   if (Array.isArray(value)) return value.map(canonical);
   if (!isObject(value)) return value;
@@ -135,7 +128,11 @@ function sniffMedia(bytes) {
 function collectReferencedMedia(vault, cardvault) {
   const paths = new Set();
   for (const cls of vault.classes || []) if (cls.imagePath) paths.add(mediaPath(cls.imagePath, `classes[${cls.id}].imagePath`));
-  for (const card of cardvault.cards || []) if (card.artPath) paths.add(mediaPath(card.artPath, `cards[${card.id}].artPath`));
+  for (const card of cardvault.cards || []) {
+    for (const field of ['artPath', 'goldMaskPath', 'prismMaskPath', 'sceneBackPath', 'sceneMidPath', 'sceneFrontPath', 'sceneSmokePath', 'scenePosterPath']) {
+      if (card[field]) paths.add(mediaPath(card[field], `cards[${card.id}].${field}`));
+    }
+  }
   const palette = vault.preferences?.officialC1Palette;
   if (palette !== undefined) {
     if (!isObject(palette)) fail('INVALID_PALETTE', 'preferences.officialC1Palette precisa ser objeto.');
@@ -279,6 +276,33 @@ function parseDataUri(value) {
   const bytes = Buffer.from(compact, 'base64');
   if (bytes.toString('base64') !== compact) fail('INVALID_MEDIA', 'Data URI contém Base64 inválido.');
   return { mime, bytes };
+}
+
+function validateCardBody(body, id, allowEmptyEnums = false) {
+  if (!body.name.trim()) fail('INVALID_CARD', `Carta ${id} precisa de nome.`);
+  if (!TYPES.has(body.type) && !(allowEmptyEnums && body.type === '')) fail('INVALID_CARD', `Tipo inválido em ${id}.`);
+  if (!ELEMENTS.has(body.element) && !(allowEmptyEnums && body.element === '')) fail('INVALID_CARD', `Elemento inválido em ${id}.`);
+  if (!/^(?:X|[0-5])$/.test(body.cost) && !(allowEmptyEnums && body.cost === '')) fail('INVALID_CARD', `Custo inválido em ${id}.`);
+  if (!WORKFLOW_STATUSES.has(body.workflowStatus)) fail('INVALID_CARD', `workflowStatus inválido em ${id}.`);
+  if (typeof body.ruleText !== 'string' || typeof body.flavourText !== 'string') fail('INVALID_CARD', `Textos inválidos em ${id}.`);
+  if (body.visualProfile != null && !['framed', 'full-art-v1'].includes(body.visualProfile)) fail('INVALID_CARD', `Composição inválida em ${id}.`);
+  for (const field of ['goldMaskPath', 'prismMaskPath']) {
+    if (body[field] == null) continue;
+    if (!body.artPath || !mediaPath(body[field], `cards[${id}].${field}`)) fail('INVALID_CARD', `Máscara sem arte em ${id}.`);
+  }
+  if (!validSceneSettings(body.sceneSettings)) fail('INVALID_CARD', `Ajustes de camadas inválidos em ${id}.`);
+  const planes = [body.sceneBackPath, body.sceneMidPath, body.sceneFrontPath];
+  if (body.scenePosterPath != null || body.sceneSmokePath != null || planes.some(path => path != null)) {
+    if ((!body.artPath && !body.scenePosterPath) || !planes.every(path => path != null && mediaPath(path, `cards[${id}].scene`))) {
+      fail('INVALID_CARD', `Cena incompleta em ${id}.`);
+    }
+    if (body.scenePosterPath != null) mediaPath(body.scenePosterPath, `cards[${id}].scenePosterPath`);
+    if (body.sceneSmokePath != null) mediaPath(body.sceneSmokePath, `cards[${id}].sceneSmokePath`);
+  }
+  for (const [field, min, max] of [['nameFontSize', 8, 32], ['typeFontSize', 4, 24], ['elementFontSize', 4, 24], ['ruleFontSize', 4, 32], ['flavourFontSize', 4, 32], ['ruleTextOffsetY', -50, 50], ['flavourTextOffsetY', -50, 50]]) {
+    const value = body[field];
+    if (value !== undefined && (!Number.isInteger(value) || value < min || value > max)) fail('INVALID_CARD', `${field} fora do intervalo em ${id}.`);
+  }
 }
 
 function createVaultService({ repository, media }) {
@@ -608,19 +632,6 @@ function createVaultService({ repository, media }) {
       tags: input.tags === undefined ? dedupeStrings(fallbackTags) : dedupeStrings(input.tags),
       artPath: artInput
     };
-  }
-
-  function validateCardBody(body, id, allowEmptyEnums = false) {
-    if (!body.name.trim()) fail('INVALID_CARD', `Carta ${id} precisa de nome.`);
-    if (!TYPES.has(body.type) && !(allowEmptyEnums && body.type === '')) fail('INVALID_CARD', `Tipo inválido em ${id}.`);
-    if (!ELEMENTS.has(body.element) && !(allowEmptyEnums && body.element === '')) fail('INVALID_CARD', `Elemento inválido em ${id}.`);
-    if (!/^(?:X|[0-5])$/.test(body.cost) && !(allowEmptyEnums && body.cost === '')) fail('INVALID_CARD', `Custo inválido em ${id}.`);
-    if (!WORKFLOW_STATUSES.has(body.workflowStatus)) fail('INVALID_CARD', `workflowStatus inválido em ${id}.`);
-    if (typeof body.ruleText !== 'string' || typeof body.flavourText !== 'string') fail('INVALID_CARD', `Textos inválidos em ${id}.`);
-    for (const [field, min, max] of [['nameFontSize', 8, 32], ['typeFontSize', 4, 24], ['elementFontSize', 4, 24], ['ruleFontSize', 4, 32], ['flavourFontSize', 4, 32], ['ruleTextOffsetY', -50, 50], ['flavourTextOffsetY', -50, 50]]) {
-      const value = body[field];
-      if (value !== undefined && (!Number.isInteger(value) || value < min || value > max)) fail('INVALID_CARD', `${field} fora do intervalo em ${id}.`);
-    }
   }
 
   async function saveLegacyInternal(input) {
@@ -986,4 +997,4 @@ function createVaultService({ repository, media }) {
   });
 }
 
-module.exports = { createVaultService, gameplayHash, GAMEPLAY_FIELDS, VaultError, mediaPath, sniffMedia, sha256 };
+export { createVaultService, gameplayHash, GAMEPLAY_FIELDS, VaultError, mediaPath, sniffMedia, sha256, validateCardBody, validateTagList, customTagSet, syncElementTag, sourceDiff, sourceSnapshot, normalizeKeywordName, keywordNameKey };

@@ -1,0 +1,19 @@
+.panel { min-width: 0; display: grid; gap: 9px; padding: 11px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.heading h2 { margin: 3px 0 0; font-size: 13px; }
+.heading > span { color: var(--muted); font-size: 9px; }
+.applyRow, .saveRow { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px; }
+.applyRow label, .saveRow label { min-width: 0; display: grid; gap: 5px; color: var(--muted); font-size: 9px; }
+.applyRow select, .saveRow input { width: 100%; min-height: 39px; padding: 0 10px; border: 1px solid var(--line-soft); border-radius: 7px; background: var(--panel-raised); color: var(--ink-soft); font-size: 10px; }
+.applyRow select:disabled { opacity: .65; }
+.applyRow .button, .saveRow .button { min-height: 39px; }
+.status, .error { margin: 0; font-size: 9px; line-height: 1.5; }
+.status { color: var(--muted); }
+.error { color: var(--red); }
+.error .button { min-height: 28px; margin-left: 5px; }
+.saveRow { padding-top: 8px; border-top: 1px solid var(--line-soft); }
+@media (max-width: 560px) {
+  .panel { padding: 9px; }
+  .applyRow, .saveRow { grid-template-columns: minmax(0, 1fr); }
+  .applyRow .button, .saveRow .button { width: 100%; }
+}

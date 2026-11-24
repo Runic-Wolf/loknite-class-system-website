@@ -1,0 +1,116 @@
+import type { SceneSettings } from './card-scene';
+import type { ClassRow } from '../classes/types';
+
+export type CardCategory = 'class' | 'enemy' | 'neutral' | 'equipment' | 'species' | 'status';
+export type CardStatus = 'RASCUNHO' | 'CONFIRMADO';
+export type CardType = 'Attack' | 'Skill' | 'Power' | 'Other' | 'Class Mechanic' | '';
+export type CardElement = 'Neutral' | 'Fire' | 'Earth' | 'Water' | 'Wind' | 'Nature' | 'Spiritual' | 'Arcane' | 'Profane' | 'Holy' | '';
+export type CardCost = '0' | '1' | '2' | '3' | '4' | '5' | 'X' | '';
+export type CardWorkflowStatus = 'draft' | 'review' | 'completed' | 'audited';
+
+export type CardVisualSettings = {
+  sceneSettings?: SceneSettings | null;
+  scenePosterPath?: string | null;
+  sceneBackPath?: string | null;
+  sceneMidPath?: string | null;
+  sceneFrontPath?: string | null;
+  sceneSmokePath?: string | null;
+  goldMaskPath?: string | null;
+  prismMaskPath?: string | null;
+  visualProfile?: 'framed' | 'full-art-v1' | null;
+  nameFontSize?: number;
+  typeFontSize?: number;
+  elementFontSize?: number;
+  ruleFontSize?: number;
+  flavourFontSize?: number;
+  ruleTextOffsetY?: number;
+  flavourTextOffsetY?: number;
+  artZoomPercent?: number;
+  artOffsetXPercent?: number;
+  artOffsetYPercent?: number;
+};
+
+export type CardRow = {
+  id: string;
+  name: string;
+  category: CardCategory;
+  type: CardType;
+  element: CardElement;
+  cost: CardCost;
+  status: CardStatus;
+  workflowStatus: CardWorkflowStatus | null;
+  ruleTextPreview: string;
+  flavourTextPreview?: string;
+  artPath: string | null;
+  ownerId: string | null;
+  layoutClassId: string | null;
+  slot: number;
+  ownerName: string | null;
+  ownerTier: ClassRow['tier'] | null;
+  ownerSlot: string | null;
+  ownerIcon: string | null;
+  ownerArtwork: string | null;
+} & CardVisualSettings;
+
+export type CardItem = {
+  id: string;
+  name: string;
+  category: CardCategory;
+  slot: number;
+  type: CardType;
+  element: CardElement;
+  cost: CardCost;
+  ruleText: string;
+  flavourText: string;
+  status: CardStatus;
+  workflowStatus: CardWorkflowStatus;
+  artPath: string | null;
+  ownerId?: string | null;
+  layoutClassId?: string;
+  tags: string[];
+  source: { kind: string; skillId?: string | null };
+  noteOwnerId?: string;
+  noteTier?: 'C1' | 'C2' | 'C3';
+  divergence?: { hasPendingSourceChanges: boolean; fields: string[] };
+} & CardVisualSettings;
+
+export type CardList = { items: CardRow[]; next: string | null };
+export type GalleryGroup = { slot: number; name: string; count: number; version: string };
+export type GalleryGroupList = { category: Exclude<CardCategory, 'class'>; items: GalleryGroup[] };
+export type GalleryGroupRenameResult = { category: Exclude<CardCategory, 'class'>; slot: number; name: string; version: string; revision?: number; unchanged?: boolean };
+export type CardRecord = { item: CardItem; version: string; position: number };
+export type CardWriteResult = CardRecord & { revision: number; unchanged?: boolean };
+
+export type CardWrite = {
+  sceneSettings?: SceneSettings | null;
+  scenePosterPath?: string | null;
+  sceneBackPath?: string | null;
+  sceneMidPath?: string | null;
+  sceneFrontPath?: string | null;
+  sceneSmokePath?: string | null;
+  goldMaskPath?: string | null;
+  prismMaskPath?: string | null;
+  visualProfile?: 'framed' | 'full-art-v1';
+  name: string;
+  type: CardType;
+  element: CardElement;
+  cost: CardCost;
+  ruleText: string;
+  flavourText: string;
+  artPath: string | null;
+  tags: string[];
+  workflowStatus?: CardWorkflowStatus;
+  category?: CardCategory;
+  ownerId?: string | null;
+  slot?: number;
+  nameFontSize?: number;
+  typeFontSize?: number;
+  elementFontSize?: number;
+  ruleFontSize?: number;
+  flavourFontSize?: number;
+  ruleTextOffsetY?: number;
+  flavourTextOffsetY?: number;
+  artZoomPercent?: number;
+  artOffsetXPercent?: number;
+  artOffsetYPercent?: number;
+};

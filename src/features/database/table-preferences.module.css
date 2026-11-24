@@ -1,0 +1,18 @@
+.sortButton { min-width: 0; display: inline-flex; align-items: center; gap: 6px; padding: 5px 0; border: 0; background: transparent; color: inherit; font: inherit; letter-spacing: inherit; text-align: left; text-transform: inherit; cursor: pointer; }
+.sortButton:hover { color: var(--accent-bright); }
+.sortButton:focus-visible { border-radius: 3px; outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+.sortButton > span { color: var(--gold-bright); font-size: 11px; }
+.columnSettings { position: relative; z-index: 4; }
+.columnSettings > summary { min-height: 36px; display: flex; align-items: center; gap: 9px; padding: 0 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--ink-soft); cursor: pointer; font-size: 10px; font-weight: 700; list-style: none; }
+.columnSettings > summary::-webkit-details-marker { display: none; }
+.columnSettings > summary::after { content: '⌄'; color: var(--muted); }
+.columnSettings[open] > summary::after { content: '⌃'; }
+.columnSettings > summary > span { color: var(--muted); font-size: 9px; font-weight: 500; }
+.columnSettings fieldset { position: absolute; top: calc(100% + 5px); right: 0; width: min(280px, calc(100vw - 30px)); display: grid; gap: 4px; margin: 0; padding: 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-raised); box-shadow: 0 14px 34px #0008; }
+.columnSettings legend { padding: 0 4px; color: var(--muted); font-size: 9px; }
+.columnSettings label { min-height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 5px; border-radius: 5px; color: var(--ink-soft); font-size: 10px; cursor: pointer; }
+.columnSettings label:hover { background: var(--surface-hover); }
+.columnSettings input { width: 15px; height: 15px; margin: 0; accent-color: var(--gold-bright); }
+.columnSettings label:has(input:disabled) { color: var(--muted); cursor: not-allowed; }
+.columnSettings fieldset > p { margin: 4px 0 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
+@media (max-width: 560px) { .columnSettings fieldset { position: fixed; top: auto; right: 13px; bottom: 14px; width: min(320px, calc(100vw - 26px)); } }

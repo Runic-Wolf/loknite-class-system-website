@@ -1,0 +1,25 @@
+.panel { min-width: 0; container: bulk-tags / inline-size; display: grid; gap: 12px; padding: 13px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+.panel > header { display: grid; gap: 4px; }
+.panel > header > h3 { margin: 0; color: var(--ink); font-size: 11px; }
+.panel > header > span, .hint { margin: 0; color: var(--muted); font-size: 9px; line-height: 1.5; }
+.form { min-width: 0; display: grid; gap: 12px; }
+.select { width: min(100%, 420px); display: grid; gap: 5px; color: var(--muted); font-size: 9px; }
+.select select { width: 100%; min-height: 42px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-raised); color: var(--ink); font-size: 11px; }
+.actions { min-width: 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 14px; }
+.actions > p { min-width: 0; margin: 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+.actions > div { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+.actions :global(.button) { min-height: 38px; white-space: nowrap; }
+.feedback { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; color: var(--red); font-size: 10px; line-height: 1.5; }
+.status, .error { margin: 0; font-size: 10px; line-height: 1.5; }
+.status { color: var(--muted); }
+.error { color: var(--red); }
+@container bulk-tags (max-width: 35rem) {
+  .select { width: 100%; }
+  .actions { align-items: stretch; flex-direction: column; }
+  .actions > div { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .actions :global(.button) { width: 100%; min-block-size: 44px; white-space: normal; }
+}
+@media (pointer: coarse) {
+  .select select, .actions :global(.button) { min-block-size: 48px; }
+  .select select { font-size: 16px; }
+}

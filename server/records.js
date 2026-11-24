@@ -1,19 +1,36 @@
+import { normalizeMentionKey } from '../shared/class-mentions.js';
+
 const entity = (table, columns = {}, options = {}) => ({
   table, columns: { id: 'id', ...columns }, key: ['id'], ...options
 });
 
 export const entities = [
-  entity('classes', { tier: 'tier', parent_id: 'parentId', slot: 'statedPath', name: 'name', concept: 'concept', notes: 'notes', image_path: 'imagePath' }, { tags: 'class_tags' }),
-  entity('skills', { class_id: 'classId', card_id: 'cardId', name: 'name', kind: 'kind' }, { tags: 'skill_tags' }),
+  entity('classes', { tier: 'tier', parent_id: 'parentId', slot: 'statedPath', name: 'name', concept: 'concept', notes: 'notes', image_path: 'imagePath' }, {
+    tags: 'class_tags', derived: { mention_key: record => normalizeMentionKey(record.name) }
+  }),
+  entity('skills', { class_id: 'classId', card_id: 'cardId', name: 'name', kind: 'kind' }, {
+    tags: 'skill_tags', derived: { mention_key: record => normalizeMentionKey(record.name) }
+  }),
   entity('cards', {
     category: 'category', slot: 'slot', name: 'name', type: 'type', element: 'element',
     cost: 'cost', rule_text: 'ruleText', flavour_text: 'flavourText', status: 'status',
-    workflow_status: 'workflowStatus', art_path: 'artPath'
+    workflow_status: 'workflowStatus', art_path: 'artPath', name_font_size: 'nameFontSize',
+    type_font_size: 'typeFontSize', element_font_size: 'elementFontSize', rule_font_size: 'ruleFontSize',
+    flavour_font_size: 'flavourFontSize', rule_text_offset_y: 'ruleTextOffsetY', flavour_text_offset_y: 'flavourTextOffsetY',
+    art_zoom_percent: 'artZoomPercent', art_offset_x_percent: 'artOffsetXPercent', art_offset_y_percent: 'artOffsetYPercent',
+    visual_profile: 'visualProfile', gold_mask_path: 'goldMaskPath', prism_mask_path: 'prismMaskPath',
+    scene_back_path: 'sceneBackPath', scene_mid_path: 'sceneMidPath', scene_front_path: 'sceneFrontPath',
+    scene_smoke_path: 'sceneSmokePath'
   }, {
     tags: 'card_tags',
+    defaults: {
+      name_font_size: 17, type_font_size: 6, element_font_size: 6, rule_font_size: 10, flavour_font_size: 7,
+      rule_text_offset_y: 0, flavour_text_offset_y: 0, art_zoom_percent: 100, art_offset_x_percent: 0, art_offset_y_percent: 0
+    },
     derived: {
       skill_id: record => record.source?.skillId ?? null,
-      owner_id: record => record.noteOwnerId ?? record.layoutClassId ?? null
+      owner_id: record => record.noteOwnerId ?? record.layoutClassId ?? null,
+      mention_key: record => normalizeMentionKey(record.name)
     }
   }),
   entity('keywords', { name: 'name', effect: 'effect' }),
@@ -40,13 +57,13 @@ export function codecs() {
   return result;
 }
 
-function encode(record, index, codec) {
+export function encode(record, index, codec) {
   const properties = new Set(Object.values(codec.columns));
   if (codec.tags) properties.add('tags');
   const row = { position: index };
   const nulls = [];
   for (const [column, property] of Object.entries(codec.columns)) {
-    row[column] = record[property] ?? null;
+    row[column] = record[property] ?? codec.defaults?.[column] ?? null;
     if (record[property] === null) nulls.push(property);
   }
   const extra = Object.fromEntries(Object.entries(record).filter(([key]) => !properties.has(key)));
@@ -55,7 +72,7 @@ function encode(record, index, codec) {
   return row;
 }
 
-function decode(row, codec) {
+export function decode(row, codec) {
   const [extra, nulls] = JSON.parse(row.details);
   for (const [column, property] of Object.entries(codec.columns)) {
     if (row[column] !== null || nulls.includes(property)) {
@@ -74,7 +91,7 @@ export function toRows(pair) {
   const rows = new Map();
   for (const codec of entities) {
     const records = (vault[codec.table] ?? cardvault[codec.table] ?? []);
-    rows.set(codec.table, records.map((record, index) => encode(record, codec.table === 'cards' ? 0 : index, codec)));
+    rows.set(codec.table, records.map((record, index) => encode(record, index, codec)));
     if (codec.tags) rows.set(codec.tags, records.flatMap(record => (record.tags ?? []).map((tag, position) => ({
       entity_id: record.id, tag, position
     }))));

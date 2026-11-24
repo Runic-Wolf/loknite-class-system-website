@@ -1,0 +1,30 @@
+.surface { display: none; }
+
+@supports (mask-image: url("mask.png")) or (-webkit-mask-image: url("mask.png")) {
+  .surface {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    transform: translate3d(var(--art-drag-x, var(--art-offset-x)), var(--art-drag-y, var(--art-offset-y)), 0) scale(var(--art-zoom));
+  }
+
+  .gold, .prism {
+    position: absolute;
+    inset: 0;
+    -webkit-mask: var(--material-mask) center / cover no-repeat;
+    mask: var(--material-mask) center / cover no-repeat;
+    mask-mode: alpha;
+  }
+
+  .gold {
+    background: radial-gradient(ellipse at var(--light-x, 28%) var(--light-y, 22%), #fff8d9 0%, #eac274 15%, #ac7734 34%, #604025b8 63%, #39231926 88%);
+    opacity: .91;
+  }
+
+  .prism {
+    background: repeating-linear-gradient(var(--light-angle, 74deg), #f388a4, #f4ce87 11%, #84d6be 22%, #82aaff 33%, #d0a2f2 44%, #f388a4 55%);
+    mix-blend-mode: screen;
+    opacity: .30;
+  }
+}

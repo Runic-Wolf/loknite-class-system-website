@@ -1,7 +1,7 @@
 import { codecs, fromRows, toRows } from './records.js';
-import domain from './vault-service.cjs';
+import { VaultError } from './vault-domain.js';
+import { changedFields } from './audit.js';
 
-const { VaultError } = domain;
 const tables = codecs();
 const guard = 'COALESCE((SELECT revision FROM workspace WHERE id = 1), 0) = ?2';
 
@@ -54,6 +54,42 @@ function upsertSQL({ table, key, fields }) {
     ON CONFLICT (${key.join(', ')}) DO UPDATE SET ${updates}`;
 }
 
+function auditSummary(previous, next, plans) {
+  const collections = {};
+  const targets = [];
+  const resources = new Map([
+    ['classes', ['class', previous?.vault.classes ?? [], next.vault.classes ?? []]],
+    ['skills', ['skill', previous?.vault.skills ?? [], next.vault.skills ?? []]],
+    ['cards', ['card', previous?.cardvault.cards ?? [], next.cardvault.cards ?? []]],
+    ['keywords', ['keyword', previous?.cardvault.keywords ?? [], next.cardvault.keywords ?? []]],
+    ['links', ['link', previous?.vault.links ?? [], next.vault.links ?? []]],
+    ['presets', ['preset', previous?.vault.presets ?? [], next.vault.presets ?? []]]
+  ]);
+  for (const [table, [resource, beforeRows, afterRows]] of resources) {
+    const plan = plans.find(item => item.codec.table === table);
+    const oldById = new Map(beforeRows.map(record => [record.id, record]));
+    const newById = new Map(afterRows.map(record => [record.id, record]));
+    const counts = { created: 0, updated: 0, deleted: plan?.deletes.length ?? 0 };
+    for (const row of plan?.upserts ?? []) {
+      const before = oldById.get(row.id);
+      const after = newById.get(row.id);
+      const operation = before ? 'updated' : 'created';
+      counts[operation]++;
+      if (targets.length < 40) targets.push({ resource, id: row.id, name: after?.name ?? row.id, operation,
+        fields: before ? changedFields(before, after) : changedFields({}, after) });
+    }
+    for (const row of plan?.deletes ?? []) {
+      if (targets.length < 40) targets.push({ resource, id: row.id, name: oldById.get(row.id)?.name ?? row.id,
+        operation: 'deleted', fields: ['record'] });
+    }
+    if (counts.created || counts.updated || counts.deleted) collections[resource] = counts;
+  }
+  const changedCount = Object.values(collections).reduce((sum, counts) => sum + counts.created + counts.updated + counts.deleted, 0);
+  const settingChanges = (plans.find(item => item.codec.table === 'settings')?.upserts ?? [])
+    .map(row => `${row.scope}/${row.key}`).slice(0, 40);
+  return { collections, targets, truncated: Math.max(0, changedCount - targets.length), settingChanges };
+}
+
 export function createRepository({ DB: db, OBJECTS: objects }, actor, action, expectedRevision) {
   return {
     async read() {
@@ -77,6 +113,7 @@ export function createRepository({ DB: db, OBJECTS: objects }, actor, action, ex
       const plans = tables.map(codec => ({
         codec, ...changes(codec, old.get(codec.table) ?? [], next.get(codec.table) ?? [])
       }));
+      const summary = auditSummary(previous, pair, plans);
       const statements = [];
       for (const { codec, deletes } of [...plans].reverse()) {
         for (const part of chunks(deletes)) statements.push(db.prepare(deleteSQL(codec)).bind(part, expected));
@@ -86,6 +123,12 @@ export function createRepository({ DB: db, OBJECTS: objects }, actor, action, ex
       }
       statements.push(db.prepare(`INSERT INTO vault_revisions (revision, transaction_id, updated_at, actor, action)
         SELECT ?1, ?3, ?4, ?5, ?6 WHERE ${guard}`).bind(revision, expected, transactionId, updatedAt, actor, action));
+      statements.push(db.prepare(`INSERT INTO audit_events (
+        event_id, revision, actor, action, resource, resource_id, resource_name,
+        changed_fields, details, created_at
+      ) SELECT ?1, ?2, ?3, ?4, 'workspace', NULL, 'Workspace', '[]', ?5, ?6
+        WHERE COALESCE((SELECT revision FROM workspace WHERE id = 1), 0) = ?7`)
+        .bind('audit-' + crypto.randomUUID(), revision, actor, action, JSON.stringify(summary), updatedAt, expected));
       statements.push(db.prepare(`INSERT INTO workspace (id, vault_id, revision, transaction_id, updated_at)
         SELECT 1, ?1, ?3, ?4, ?5 WHERE ${guard}
         ON CONFLICT(id) DO UPDATE SET revision = excluded.revision,
@@ -107,8 +150,16 @@ export function createRepository({ DB: db, OBJECTS: objects }, actor, action, ex
       const id = crypto.randomUUID();
       const createdAt = new Date().toISOString();
       await objects.put('backups/' + id, JSON.stringify(pair));
-      await db.prepare('INSERT INTO backups (id, revision, created_at, actor) VALUES (?, ?, ?, ?)')
-        .bind(id, pair.vault.revision, createdAt, actor).run();
+      await db.batch([
+        db.prepare('INSERT INTO backups (id, revision, created_at, actor) VALUES (?, ?, ?, ?)')
+          .bind(id, pair.vault.revision, createdAt, actor),
+        db.prepare(`INSERT INTO audit_events (
+          event_id, revision, actor, action, resource, resource_id, resource_name,
+          changed_fields, details, created_at
+        ) VALUES (?, ?, ?, 'create', 'backup', ?, 'Workspace backup', '["revision"]', ?, ?)`)
+          .bind('audit-' + crypto.randomUUID(), pair.vault.revision, actor, id,
+            JSON.stringify({ sourceRevision: pair.vault.revision }), createdAt)
+      ]);
       return { id, revision: pair.vault.revision, createdAt };
     },
 

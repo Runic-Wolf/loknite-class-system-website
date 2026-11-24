@@ -1,0 +1,20 @@
+.field { min-width: 0; display: grid; align-content: start; gap: 6px; color: var(--ink-soft); font-size: 10px; font-weight: 700; }
+.field > input:not([type='file']) { width: 100%; min-width: 0; min-height: 42px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel-inset); color: var(--ink); font-size: 12px; line-height: 1.5; }
+.field > input:focus { border-color: var(--line-accent); outline: 2px solid color-mix(in srgb, var(--focus) 45%, transparent); outline-offset: 1px; }
+.field small { color: var(--muted); font-size: 9px; font-weight: 400; line-height: 1.45; }
+.field .error { color: var(--red); }
+.field .status { color: var(--green); }
+.preview { min-width: 0; display: flex; align-items: center; gap: 8px; padding: 7px; border: 1px solid var(--line-soft); border-radius: 7px; background: var(--panel-inset); }
+.preview img { width: 42px; height: 52px; flex: 0 0 auto; object-fit: contain; border-radius: 4px; background: var(--panel); }
+.preview code { min-width: 0; flex: 1; overflow: hidden; color: var(--muted); font: 9px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.preview .button { min-height: 36px; flex: 0 0 auto; padding-inline: 9px; font-size: 9px; }
+.uploadRow { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+.fileInput { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+.fileInput:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 3px; }
+.uploadRow .button { min-height: 38px; font-size: 10px; }
+.fileName { min-width: 0; flex: 1 1 100%; overflow: hidden; color: var(--muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 560px) {
+  .uploadRow .button { min-height: 42px; }
+  .preview { flex-wrap: wrap; }
+  .preview code { flex-basis: calc(100% - 58px); }
+}

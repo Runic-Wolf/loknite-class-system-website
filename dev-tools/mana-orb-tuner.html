@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Mana orb tuner · Lok’nite Class Studio</title>
+    <link rel="stylesheet" href="/dev-tools/mana-orb-tuner.css" />
+    <script type="module" src="/dev-tools/mana-orb-tuner.js"></script>
+  </head>
+  <body>
+    <main class="tuner">
+      <header class="page-heading">
+        <div>
+          <p class="eyebrow">LOK’NITE CLASS STUDIO <span>·</span> LOCAL DEV TOOL</p>
+          <h1>Mana orb tuner</h1>
+          <p class="lede">Adjust the sphere against the real Fighter frame. Copy the config and send it back.</p>
+        </div>
+        <a class="back-link" href="/?view=cards">Back to Card Gallery <span aria-hidden="true">↗</span></a>
+      </header>
+
+      <div class="workspace">
+        <section class="preview-panel" aria-labelledby="preview-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">FRAME PREVIEW</p>
+              <h2 id="preview-title">Fighter · C1 Bronze</h2>
+            </div>
+            <span class="frame-tag">5:7 card frame</span>
+          </div>
+          <div class="preview-stage">
+            <div class="card-preview" id="card-preview" data-layer="behind">
+              <div class="card-backdrop" aria-hidden="true"></div>
+              <div class="orb-slot" id="orb-slot" aria-hidden="true">
+                <img class="orb-image" src="/card-effects/mana-orb/toroidal-97.png" alt="" draggable="false" />
+              </div>
+              <img class="card-frame" src="/card-layouts/01_C1_BRONZE/01_FIGHTER.png" alt="Fighter C1 Bronze card frame" />
+              <div class="cost-slot" id="cost-slot">
+                <span id="cost-value">2</span>
+              </div>
+            </div>
+          </div>
+          <p class="preview-note">Uses the 97% toroidal orb snapshot and the actual Fighter frame. This page only previews settings; it does not change the app or its data.</p>
+        </section>
+
+        <section class="controls-panel" aria-labelledby="controls-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">TUNING</p>
+              <h2 id="controls-title">Fit the socket</h2>
+            </div>
+            <button class="text-button" id="reset" type="button">Reset</button>
+          </div>
+
+          <label class="control-row" for="diameter">
+            <span class="control-copy"><span>Orb diameter</span><output id="diameter-output" for="diameter">69%</output></span>
+            <input id="diameter" type="range" min="58" max="82" step="1" value="69" />
+            <small>Percent of the mana socket width</small>
+          </label>
+
+          <label class="control-row" for="offset-x">
+            <span class="control-copy"><span>Horizontal position</span><output id="offset-x-output" for="offset-x">0.2%</output></span>
+            <input id="offset-x" type="range" min="-1.5" max="1.5" step="0.1" value="0.2" />
+            <small>Moves the orb and cost together across the card</small>
+          </label>
+
+          <label class="control-row" for="offset-y">
+            <span class="control-copy"><span>Vertical position</span><output id="offset-y-output" for="offset-y">0.2%</output></span>
+            <input id="offset-y" type="range" min="-1.5" max="1.5" step="0.1" value="0.2" />
+            <small>Moves the orb and cost together across the card</small>
+          </label>
+
+          <label class="control-row" for="layer">
+            <span class="control-copy"><span>Orb layer</span><span class="sr-only">Choose whether the orb sits above or behind the card frame</span></span>
+            <select id="layer">
+              <option value="front">Above the frame</option>
+              <option value="behind" selected>Behind the frame</option>
+            </select>
+            <small>The cost number stays above the frame in both modes</small>
+          </label>
+
+          <label class="control-row" for="cost-font">
+            <span class="control-copy"><span>Cost type size</span><output id="cost-font-output" for="cost-font">5.8cqi</output></span>
+            <input id="cost-font" type="range" min="5" max="9.5" step="0.1" value="5.8" />
+            <small>Uses the same white fill and dark outline as the card preview</small>
+          </label>
+
+          <label class="control-row cost-text-control" for="cost-text">
+            <span class="control-copy"><span>Preview cost</span></span>
+            <input id="cost-text" type="text" inputmode="numeric" maxlength="2" value="2" />
+          </label>
+
+          <div class="config-area">
+            <div class="config-heading">
+              <div><p class="eyebrow">COPYABLE SETTINGS</p><h3>Current config</h3></div>
+              <button class="copy-button" id="copy" type="button">Copy config</button>
+            </div>
+            <textarea id="config" rows="8" readonly spellcheck="false" aria-label="Current mana orb configuration"></textarea>
+            <p id="status" class="status" role="status" aria-live="polite">Settings are saved in this browser.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,20 +1,25 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "loknite-class-system-website",
-  "main": "server/worker.js",
+  "main": "server/worker.ts",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "keep_vars": true,
   "preview_urls": false,
   "assets": {
-    "directory": "./dist",
     "binding": "ASSETS",
     "run_worker_first": true,
-    "not_found_handling": "404-page"
+    "not_found_handling": "single-page-application"
   },
   "durable_objects": {
     "bindings": [{ "name": "VAULT", "class_name": "LokniteVault" }]
   },
+  "ratelimits": [
+    {
+      "name": "LCS_LOGIN_LIMITER",
+      "namespace_id": "2911202601",
+      "simple": { "limit": 8, "period": 60 }
+    }
+  ],
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LokniteVault"] }],
-  "rules": [{ "type": "Text", "globs": ["**/*.sql"], "fallthrough": true }]
 }

@@ -1,0 +1,49 @@
+.page { min-width: 0; display: grid; gap: 15px; }
+.pageHeading { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+.pageHeading h1 { margin: 7px 0 5px; font-size: clamp(27px, 2.4vw, 34px); font-weight: 720; letter-spacing: -.045em; line-height: 1.12; }
+.pageHeading p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.actorFilter { width: min(100%, 280px); display: grid; gap: 6px; color: var(--ink-soft); font-size: 10px; font-weight: 700; }
+.actorFilter select { min-height: 42px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-raised); color: var(--ink); font-size: 11px; }
+.eventList { min-width: 0; overflow: clip; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+.event { min-width: 0; display: flex; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line-soft); }
+.event:last-child { border-bottom: 0; }
+.eventMark { width: 34px; height: 34px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid var(--line-muted); border-radius: 10px; background: var(--panel-inset); color: var(--gold); font-size: 15px; }
+.eventCopy { min-width: 0; flex: 1; display: grid; gap: 6px; }
+.eventCopy header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.eventCopy p { min-width: 0; margin: 0; color: var(--ink-soft); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.eventCopy p strong { color: var(--ink); font-weight: 700; }
+.eventCopy time { flex: 0 0 auto; color: var(--muted); font-size: 10px; white-space: nowrap; }
+.eventMeta { display: flex; flex-wrap: wrap; gap: 6px; }
+.eventMeta span { padding: 4px 7px; border: 1px solid var(--line-soft); border-radius: 99px; color: var(--muted); font-size: 9px; }
+.eventId { color: var(--subtle); font: 9px var(--mono); overflow-wrap: anywhere; }
+.nextPage { min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; color: var(--gold-bright); font-size: 11px; font-weight: 700; }
+.nextPage:hover { background: var(--surface-hover); }
+.privacyNote { margin: 0; color: var(--muted); font-size: 10px; }
+.emptyState, .errorState { min-height: 230px; display: grid; align-content: center; justify-items: center; gap: 9px; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); text-align: center; }
+.emptyState h2, .errorState h2 { margin: 0; font-size: 16px; }
+.emptyState p, .errorState p { max-width: 40ch; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.errorState p { color: var(--red); }
+.skeletonList { display: grid; }
+.skeletonEvent { min-height: 86px; display: flex; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line-soft); }
+.skeletonEvent:last-child { border-bottom: 0; }
+.skeletonEvent > i { width: 34px; height: 34px; flex: 0 0 auto; border-radius: 10px; background: var(--surface-hover); }
+.skeletonEvent > span { flex: 1; display: grid; align-content: start; gap: 9px; }
+.skeletonEvent b, .skeletonEvent small { display: block; height: 10px; border-radius: 99px; background: linear-gradient(90deg, var(--panel-raised), var(--surface-hover), var(--panel-raised)); background-size: 220% 100%; animation: skeleton-shimmer 1.6s ease-in-out infinite; }
+.skeletonEvent b { width: min(390px, 80%); }
+.skeletonEvent small { width: min(280px, 60%); height: 8px; }
+
+@media (max-width: 560px) {
+  .page { gap: 12px; }
+  .pageHeading { align-items: start; flex-direction: column; }
+  .actorFilter { width: 100%; }
+  .event { gap: 9px; padding: 12px 10px; }
+  .eventMark { width: 31px; height: 31px; }
+  .eventCopy header { display: grid; gap: 4px; }
+  .eventCopy time { font-size: 9px; }
+  .eventCopy p { font-size: 11px; }
+  .eventMeta { gap: 4px; }
+  .eventMeta span { font-size: 8px; }
+  .skeletonEvent { padding-inline: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .skeletonEvent b, .skeletonEvent small { animation: none; } }

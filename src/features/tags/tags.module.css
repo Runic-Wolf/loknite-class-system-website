@@ -1,0 +1,26 @@
+.filter { position: relative; min-width: 0; }
+.filter > summary { min-height: 43px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-raised); color: var(--ink-soft); cursor: pointer; font-size: 11px; list-style: none; }
+.filter > summary::-webkit-details-marker { display: none; }
+.filter > summary::after { content: '⌄'; color: var(--muted); }
+.filter[open] > summary { border-color: var(--line-accent); border-radius: 8px 8px 0 0; }
+.filter > summary small { color: var(--muted); font-size: 9px; white-space: nowrap; }
+.filterPanel { position: absolute; z-index: 20; inset: calc(100% - 1px) auto auto 0; width: min(420px, calc(100vw - 24px)); max-height: min(420px, 62dvh); overflow: auto; padding: 8px; border: 1px solid var(--line-accent); border-radius: 0 0 9px 9px; background: var(--panel); box-shadow: 0 14px 34px #0007; }
+.filterEnd .filterPanel { inset-inline: auto 0; }
+.filterPanel > p { margin: 0 0 7px; color: var(--muted); font-size: 9px; line-height: 1.5; }
+.filterPanel > .filterWarning { padding: 6px; border-radius: 6px; background: var(--red-soft); color: var(--red); }
+.filterGroup { margin: 0; padding: 5px 0; border: 0; border-top: 1px solid var(--line-soft); }
+.filterGroup legend { padding: 3px 0; color: var(--gold-bright); font: 9px var(--mono); }
+.filterGroup > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; }
+.filterGroup > .filterChipList { display: flex; flex-wrap: wrap; gap: 6px; }
+.filterChip { min-height: 34px; display: inline-flex; align-items: center; justify-content: center; padding: 0 10px; border: 1px solid var(--line-muted); border-radius: 99px; background: var(--panel-raised); color: var(--ink-soft); cursor: pointer; font-size: 10px; line-height: 1.2; text-align: center; transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease; }
+.filterChip:hover { border-color: var(--line-accent); background: var(--surface-hover); color: var(--ink); }
+.filterChip[aria-pressed='true'] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, var(--panel-raised)); color: var(--accent-bright); }
+.filterChip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.filterGroup label { min-width: 0; min-height: 34px; display: flex; align-items: center; gap: 7px; padding: 4px 6px; border-radius: 5px; color: var(--ink-soft); cursor: pointer; font-size: 10px; }
+.filterGroup label:hover { background: var(--surface-hover); }
+.filterGroup input { width: 15px; height: 15px; flex: 0 0 auto; margin: 0; accent-color: var(--accent); }
+.filterGroup label span { overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 760px) {
+  .filterPanel, .filterEnd .filterPanel { inset-inline: 50% auto; transform: translateX(-50%); }
+}
+.filterGroup label:focus-within { outline: 2px solid var(--focus); outline-offset: 1px; }

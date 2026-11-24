@@ -1,7 +1,6 @@
-import domain from './vault-service.cjs';
+import { mediaPath, sha256, sniffMedia } from './vault-domain.js';
 import { HttpError } from './http.js';
 
-const { mediaPath, sha256, sniffMedia } = domain;
 const extensionMime = {
   png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp'
 };

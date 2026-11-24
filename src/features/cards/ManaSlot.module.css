@@ -1,0 +1,10 @@
+.slot { position: absolute; top: var(--mana-slot-offset-y, 0%); left: var(--mana-slot-offset-x, 0%); width: 21%; height: 15%; display: grid; place-items: center; }
+.orbSnapshot { position: absolute; z-index: 2; inset: 0; width: var(--mana-orb-diameter, 69%); height: var(--mana-orb-diameter, 69%); margin: auto; object-fit: contain; pointer-events: none; }
+.ribbonCanvas { position: absolute; z-index: 2; inset: 0; width: var(--mana-orb-diameter, 69%); height: var(--mana-orb-diameter, 69%); margin: auto; border-radius: 50%; clip-path: circle(49%); opacity: 0; pointer-events: none; transition: opacity 130ms ease-out; }
+.slot[data-orb-layer='above-frame'] .orbSnapshot, .slot[data-orb-layer='above-frame'] .ribbonCanvas { z-index: 4; }
+.ribbonCanvas[data-ready='true'] { opacity: 1; }
+.cost { position: relative; z-index: 5; max-width: 75%; color: #fff; font: 800 clamp(12px, var(--mana-cost-font, 5.8cqi), 21px)/1 Arial, sans-serif; -webkit-text-stroke: .8px #07111d; paint-order: stroke fill; text-shadow: 0 1px 2px #00101dcc, 0 -1px 1px #00101d; pointer-events: none; }
+.costHit { position: absolute; z-index: 6; inset: 0; width: 100%; min-height: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: text; }
+.costHit:hover { outline: 1px dashed #f1c66a; outline-offset: 1px; }
+.costHit:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+@media (prefers-reduced-motion: reduce) { .ribbonCanvas { transition: none; } }
